@@ -1,0 +1,11 @@
+# Arbeitsergebnisse eines Skill-Laufs, falls doch mal eines hier landet.
+# Sie gehören zur jeweiligen Fragestellung, nicht zur Skill.
+#
+# Bewusst KEIN Muster wie `*-varianten/` — das verschluckt `gui-varianten/`,
+# also die Skill selbst. Deshalb nur konkrete Dateinamen.
+auswahl.json
+verlauf.json
+
+# Python
+__pycache__/
+*.pyc
