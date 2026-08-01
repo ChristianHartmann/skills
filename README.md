@@ -83,7 +83,15 @@ an agent reads it back.
 
 ## Install
 
+Two ways in. On Claude Code the plugin route needs no clone and updates itself;
+everywhere else you clone this repo and link the skill folder into the
+directory your agent scans.
+
 ### Claude Code, as a plugin
+
+A marketplace here is nothing more than a catalogue file in this repository
+listing what can be installed from it. You add the catalogue once, then install
+from it by name:
 
 ```
 /plugin marketplace add ChristianHartmann/skills
@@ -91,17 +99,24 @@ an agent reads it back.
 /reload-plugins
 ```
 
-Updates arrive with `/plugin marketplace update` - there is no version to bump,
-so every commit here counts as a new one.
+`ui-variants` is the plugin, `hartmann-skills` the catalogue it came from.
+Later updates are `/plugin marketplace update` - there is no version to bump
+here, so every commit counts as a new one.
 
 Installed this way the skill is namespaced by its plugin, so the explicit
-invocation is `/ui-variants:ui-variants`. Nothing changes for the usual case
-where the agent reaches for it on its own.
+invocation becomes `/ui-variants:ui-variants`. Nothing changes for the usual
+case where the agent reaches for it on its own.
 
 ### Anywhere else, by symlink
 
-Symlink rather than copy, so this repo stays the single source of truth. After
-the first edit to a copied version, nobody knows which of the two is current.
+```bash
+git clone https://github.com/ChristianHartmann/skills.git
+cd skills
+```
+
+Then link rather than copy, so this repo stays the single source of truth.
+After the first edit to a copied version, nobody knows which of the two is
+current.
 
 | Agent | Command |
 | --- | --- |
