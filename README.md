@@ -1,62 +1,114 @@
-# Claude-Skills
+# Agent skills
 
-Eigene Skills für Claude Code, versioniert. Eine Skill ist ein Ordner mit einer
-`SKILL.md` und optionalem Beiwerk unter `scripts/` und `assets/`.
+Skills for coding agents, kept under version control. A skill is a folder with a
+`SKILL.md` and optional extras under `scripts/`, `assets/` and `references/`.
+They follow the [Agent Skills](https://agentskills.io) open format, so they work
+in Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Amp, Goose
+and other agents that read it.
 
-## Enthaltene Skills
+## Skills in this repo
 
-| Skill | Wofür |
+| Skill | What it does |
 | --- | --- |
-| [`gui-varianten`](gui-varianten/) | Baut zu einer Oberflächen-Frage 3–5 durchnummerierte, bedienbare HTML-Varianten aus den echten Tokens und dem echten CSS der Anwendung, öffnet sie im Browser und nimmt die Rückmeldung direkt in die Sitzung zurück. |
+| [`ui-variants`](skills/ui-variants/) | Turns a user-interface question into 3-5 numbered, operable HTML variants built from the application's real tokens and real CSS, opens them in the browser, and takes the reply straight back into the session. |
 
-## Installieren
+## ui-variants
 
-Claude Code sucht Skills unter `~/.claude/skills/`. Damit dieses Repo die
-alleinige Quelle bleibt und nicht neben der installierten Fassung
-auseinanderdriftet, verlinken statt kopieren:
+Design questions are hard to settle in chat. "A floating handle on the divider"
+produces two different pictures in the agent's head and in yours, and you only
+find out once it is built. This skill reverses the order: see first, then decide.
+
+![The comparison page: the current state as variant 0, then numbered variants, each with the reasoning behind it and its pros and cons](docs/images/example-page.png)
+
+Each variant is a real, clickable rebuild inside its own iframe, using the
+project's own token file and component stylesheet - so what you judge is close
+to what you would get. Below the variants is a form: pick a number, write what
+you want changed, submit. The answer lands in the agent's session without you
+copying anything, and every round is kept in a history that is shown again next
+time.
+
+The agent triggers the skill on its own when you say you don't like something,
+ask for alternatives, or send a screenshot with a complaint - the word "variant"
+never has to come up.
+
+### Try it
+
+No installation needed, no dependencies - Python 3.9+ and a browser:
 
 ```bash
-ln -s ~/projects/skills/gui-varianten ~/.claude/skills/gui-varianten
+python3 skills/ui-variants/scripts/show_variants.py examples/sidebar-handle
 ```
 
-Ist dort schon ein echtes Verzeichnis, vorher wegräumen — aber erst prüfen, ob
-es Änderungen enthält, die hier noch fehlen:
+That opens the page above, built from
+[`examples/sidebar-handle/`](examples/sidebar-handle/). Pick a variant and
+submit: the command prints your choice as JSON and exits, which is exactly how
+an agent reads it back.
+
+## Install
+
+Symlink rather than copy, so this repo stays the single source of truth. After
+the first edit to a copied version, nobody knows which of the two is current.
+
+| Agent | Command |
+| --- | --- |
+| Claude Code | `ln -s "$PWD/skills/ui-variants" ~/.claude/skills/ui-variants` |
+| Codex | `mkdir -p ~/.agents/skills && ln -s "$PWD/skills/ui-variants" ~/.agents/skills/ui-variants` |
+| Cursor | `mkdir -p ~/.agents/skills && ln -s "$PWD/skills/ui-variants" ~/.agents/skills/ui-variants` |
+| Others | see [`references/generic.md`](skills/ui-variants/references/generic.md) |
+
+Use `.claude/skills/` or `.agents/skills/` inside a repository instead to scope
+a skill to one project. Each agent's exact paths, its background-execution
+idiom and its limits are in
+[`skills/ui-variants/references/`](skills/ui-variants/references/).
+
+If there is already a real directory at the target, clear it first - but check
+whether it holds changes this repo is missing:
 
 ```bash
-diff -r ~/.claude/skills/gui-varianten ~/projects/skills/gui-varianten
+diff -r ~/.claude/skills/ui-variants skills/ui-variants
 ```
 
-Kopieren geht auch, kostet aber genau das, wofür dieses Repo da ist: Nach der
-ersten Änderung an der installierten Fassung weiß niemand mehr, welche der
-beiden die aktuelle ist.
+## Bundled scripts
 
-## Arbeiten an einer Skill
+`skills/ui-variants/scripts/` holds two tools that are useful outside the skill
+too. Both are standard library only.
 
-Skills sind Prompts, keine Programme — sie lassen sich nicht kompilieren und
-nicht mit Unit-Tests absichern. Was stattdessen trägt:
+- `show_variants.py` - builds the comparison page, serves it locally, opens the
+  browser and takes the choice back via POST. `--build-only` writes a single
+  self-contained HTML file instead; `--no-browser` serves without launching one;
+  `--timeout` bounds the wait for agents that cut off long-running commands.
+- `css_collisions.py` - finds class names that are defined in more than one CSS
+  file. When CSS modules are concatenated outside the bundler they silently
+  override each other, and you end up looking for the bug in your own markup.
 
-- **An einem echten Fall ausprobieren**, nicht am Schreibtisch beurteilen.
-  Am ehrlichsten mit einem frischen Agenten, der nur die Anleitung bekommt: Was
-  er falsch macht, ist eine Lücke in der Anleitung, kein Fehler des Agenten.
-- **Nach dem Lauf nach Kritik fragen.** Wo war die Anleitung unklar, was musste
-  geraten werden, was hat unnötig Zeit gekostet? Diese Rückmeldung ist der
-  eigentliche Ertrag eines Testlaufs.
-- **Wiederholte Handarbeit in ein Skript gießen.** Tut ein Agent bei jedem Lauf
-  dieselbe mühsame Sache, gehört sie nach `scripts/` — einmal richtig statt
-  jedes Mal neu erfunden.
-- **Das Warum aufschreiben, nicht nur das Was.** Eine Anweisung, deren Grund
-  dasteht, wird sinnvoll angewandt; eine ohne wird buchstabengetreu befolgt und
-  am nächsten Sonderfall falsch.
+## Working on a skill
 
-## Beigelegte Skripte
+Skills are prompts, not programs - they cannot be compiled, and unit tests only
+reach the scripts around them. What does carry:
 
-`gui-varianten/scripts/` enthält zwei Werkzeuge, die auch außerhalb der Skill
-nützlich sind:
+- **Try it on a real case** rather than judging it at the desk. Most honest with
+  a fresh agent that gets nothing but the instructions: what it gets wrong is a
+  gap in the instructions, not a fault of the agent.
+- **Ask for criticism after the run.** Where were the instructions unclear, what
+  had to be guessed, what cost time for nothing? That feedback is the actual
+  yield of a test run.
+- **Pour repeated manual work into a script.** If an agent does the same tedious
+  thing on every run, it belongs in `scripts/` - done right once instead of
+  reinvented every time.
+- **Write down the why, not just the what.** An instruction whose reason is
+  stated gets applied sensibly; one without gets followed to the letter and
+  applied wrongly at the next edge case.
 
-- `varianten_zeigen.py` — baut die Vergleichsseite, serviert sie lokal, öffnet
-  den Browser und nimmt die Auswahl per POST zurück. `--nur-bauen` erzeugt
-  stattdessen eine einzelne HTML-Datei.
-- `css_kollisionen.py` — findet Klassennamen, die in mehreren CSS-Dateien
-  vergeben sind. Beim Zusammenfügen von CSS-Modulen außerhalb des Bundlers
-  überschreiben die sich gegenseitig, und man sucht den Fehler dann im eigenen
-  Markup.
+## Tests
+
+```bash
+python3 -m unittest discover -s tests -t tests
+```
+
+No dependencies. The suite covers both scripts and validates `SKILL.md` against
+the Agent Skills specification, so a rename in the JSON contract cannot silently
+drift apart from the documentation.
+
+## Licence
+
+[MIT](LICENSE).

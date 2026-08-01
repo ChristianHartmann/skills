@@ -1,0 +1,89 @@
+<!-- Variant 3: the handle stays, but becomes a labelled surface at the top of
+     the panel - the whole header row is the control. -->
+
+<div class="shell" id="shell">
+  <div class="rail" id="rail" hidden>
+    <button class="railLabel" id="expand" aria-expanded="false" aria-controls="panel">
+      Layers<span class="sr-only">, expand panel</span>
+    </button>
+  </div>
+
+  <div class="panel" id="panel">
+    <button class="panelHeader headerButton" id="collapse" aria-expanded="true" aria-controls="panel">
+      <span>Layers</span>
+      <span class="chevron">‹</span>
+    </button>
+    <div class="panelBody">
+      <div class="layerRow selected"><span class="swatch"></span>Background</div>
+      <div class="layerRow"><span class="swatch"></span>Sketch</div>
+      <div class="layerRow"><span class="swatch"></span>Annotations</div>
+    </div>
+  </div>
+
+  <div class="canvas">Canvas</div>
+</div>
+
+<style>
+  html, body { height: 100%; }
+  .shell { height: 100%; }
+
+  /* The header is already a labelled surface - making it the button means no
+     extra control has to be found, only the one that is already there. */
+  /* The tint is what makes the difference visible while standing still:
+     without it this reads as an ordinary header and the variant is
+     indistinguishable from one where only a small icon is clickable. */
+  .headerButton {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-sunken);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text);
+    text-align: left;
+    transition: background 120ms ease;
+  }
+  .headerButton:hover { background: var(--line); }
+  .headerButton:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .chevron {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+
+  /* Collapsed, the same label survives - rotated onto the rail, so the panel
+     keeps its name instead of turning into an anonymous strip. */
+  .railLabel {
+    writing-mode: vertical-rl;
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-1);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+  }
+  .railLabel:hover { background: var(--surface-sunken); color: var(--text); }
+  .railLabel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<script>
+  const panel = document.getElementById('panel');
+  const rail = document.getElementById('rail');
+
+  function setCollapsed(collapsed) {
+    panel.hidden = collapsed;
+    rail.hidden = !collapsed;
+  }
+
+  document.getElementById('collapse').addEventListener('click', () => setCollapsed(true));
+  document.getElementById('expand').addEventListener('click', () => setCollapsed(false));
+</script>

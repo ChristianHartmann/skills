@@ -1,0 +1,58 @@
+{
+  "title": "Collapsing and expanding the left sidebar",
+  "context": "Editor.module.css · tokens.css",
+  "current_image": "current.png",
+  "current_note": "Today a small chevron icon sits at the top right of the panel. It is easy to miss, and once the panel is collapsed there is nothing left to click.",
+  "tokens_css": ["tokens.css"],
+  "extra_css": ["Editor.module.css"],
+  "variants": [
+    {
+      "number": 1,
+      "title": "Floating pill on the divider",
+      "height": 340,
+      "rationale": "The handle is about the boundary between panel and content, so it belongs on that boundary rather than inside one of the two. That also makes it independent of the panel's contents: it stays in the same place whatever is scrolled or selected, and it stays reachable when the panel is gone.",
+      "pros": [
+        "Always in the same place, however wide the panel is",
+        "Reachable in both states without a second control",
+        "Reads as a divider affordance, which is what it is"
+      ],
+      "cons": [
+        "Overlaps the content in a very narrow window",
+        "Needs a shadow token to lift off both surfaces",
+        "A 22px target is small for touch"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "The rail itself is the control",
+      "height": 340,
+      "rationale": "If the collapsed state is already a visible strip, that strip can be the way back - then no extra control has to exist for it. The cost is that a surface has to advertise itself as clickable, which a strip of dots does not do on its own.",
+      "pros": [
+        "No extra control to find; the largest possible target area",
+        "Nothing overlaps the content",
+        "One fewer element in the expanded state"
+      ],
+      "cons": [
+        "Collapsing and expanding use different controls, which is asymmetric",
+        "A clickable surface without a label is easy to overlook",
+        "Blocks putting anything else clickable on the rail later"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "The panel header is the control",
+      "height": 340,
+      "rationale": "The header already exists, already carries the panel's name and already sits where you look when you deal with the panel. Making it the control means nothing new has to be found - and the name survives into the collapsed state instead of the panel becoming an anonymous strip.",
+      "pros": [
+        "A labelled target instead of an icon that has to be guessed",
+        "Large target area in both states",
+        "The panel keeps its name when collapsed"
+      ],
+      "cons": [
+        "Rules out other click behaviour on the header later",
+        "Vertical text on the rail is harder to read",
+        "A whole row as a button can read as accidental"
+      ]
+    }
+  ]
+}

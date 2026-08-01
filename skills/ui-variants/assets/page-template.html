@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>__TITLE__ - Variants</title>
+    <style>
+      /* Chrome of the comparison page. Deliberately neutral: the variants bring
+         their own tokens, and the page around them should not compete with
+         them visually.
+
+         Three type sizes, no more: 19px heading, 15px body, 12px trimming.
+         Restrained does not mean flat - if the sizes sit too close together,
+         the eye searches for the structure instead of seeing it. */
+      :root {
+        color-scheme: light dark;
+        --page-bg: #f6f6f5;
+        --page-surface: #ffffff;
+        --page-text: #1c1c1a;
+        --page-muted: #6b6b66;
+        --page-line: #e2e2de;
+        --page-accent: #d94f2b;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --page-bg: #17171a;
+          --page-surface: #202024;
+          --page-text: #ececea;
+          --page-muted: #9a9a94;
+          --page-line: #33333a;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: var(--page-bg);
+        color: var(--page-text);
+      }
+      header.top {
+        position: sticky; top: 0; z-index: 10;
+        background: var(--page-surface);
+        border-bottom: 1px solid var(--page-line);
+        padding: 14px 24px;
+        display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap;
+      }
+      header.top h1 { font-size: 19px; margin: 0; font-weight: 650; }
+      /* The source note should prove where the look comes from - not flood the
+         header. It may be long, one line is visible; the rest lives in the
+         title attribute. */
+      header.top .context {
+        color: var(--page-muted); font-size: 12px;
+        max-width: 52ch; white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis;
+      }
+      nav.jump { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+      nav.jump a {
+        text-decoration: none; color: var(--page-text);
+        border: 1px solid var(--page-line); border-radius: 999px;
+        padding: 3px 11px; font-size: 12px; font-variant-numeric: tabular-nums;
+      }
+      nav.jump a:hover { border-color: var(--page-accent); color: var(--page-accent); }
+      main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+      section.variant {
+        background: var(--page-surface);
+        border: 1px solid var(--page-line);
+        border-radius: 10px;
+        margin-bottom: 28px;
+        overflow: hidden;
+        scroll-margin-top: 76px;
+      }
+      .head {
+        display: flex; align-items: center; gap: 12px;
+        padding: 13px 18px; border-bottom: 1px solid var(--page-line);
+      }
+      .number {
+        flex: none;
+        width: 27px; height: 27px; border-radius: 50%;
+        display: grid; place-items: center;
+        background: var(--page-accent); color: #fff;
+        font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums;
+      }
+      .number.current { background: var(--page-muted); }
+      .head h2 { font-size: 15px; margin: 0; font-weight: 620; }
+      .stage { padding: 0; background: var(--page-bg); }
+      .stage iframe { display: block; width: 100%; border: 0; }
+      /* At original size, not stretched to the column width: an upscaled
+         screenshot is blurry AND sits at a different scale than the variants
+         next to it - then you compare sizes instead of designs. */
+      .stage img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; }
+      .thinking { padding: 16px 18px 4px; }
+      .thinking p { margin: 0 0 12px; }
+      .thinking h3 {
+        font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
+        color: var(--page-muted); margin: 0 0 6px;
+      }
+      .tradeoffs { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 4px 18px 18px; }
+      @media (max-width: 720px) { .tradeoffs { grid-template-columns: 1fr; } }
+      .tradeoffs ul { margin: 0; padding-left: 18px; }
+      .tradeoffs li { margin-bottom: 5px; }
+      .tradeoffs .pros h3 { color: #2e7d4f; }
+      .tradeoffs .cons h3 { color: #b4462c; }
+      form.choice {
+        background: var(--page-surface);
+        border: 1px solid var(--page-line);
+        border-radius: 10px; padding: 18px;
+      }
+      form.choice h2 { margin: 0 0 4px; font-size: 19px; }
+      form.choice .hint { color: var(--page-muted); font-size: 12px; margin: 0 0 14px; }
+      .buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+      .buttons label {
+        border: 1px solid var(--page-line); border-radius: 8px;
+        padding: 7px 14px; cursor: pointer; font-variant-numeric: tabular-nums;
+      }
+      .buttons input { position: absolute; opacity: 0; pointer-events: none; }
+      .buttons input:checked + span { color: var(--page-accent); font-weight: 650; }
+      .buttons label:has(input:checked) { border-color: var(--page-accent); }
+      /* The radio itself is invisible so that the label is the target area -
+         but then the label has to show focus, otherwise a keyboard user is
+         left in the dark. */
+      .buttons label:has(input:focus-visible) {
+        outline: 2px solid var(--page-accent);
+        outline-offset: 2px;
+      }
+      textarea {
+        width: 100%; min-height: 96px; padding: 10px 12px;
+        border: 1px solid var(--page-line); border-radius: 8px;
+        background: var(--page-bg); color: var(--page-text);
+        font: inherit; resize: vertical;
+      }
+      button.send {
+        margin-top: 12px; padding: 9px 20px;
+        background: var(--page-accent); color: #fff;
+        border: 0; border-radius: 8px; font: inherit; font-weight: 620; cursor: pointer;
+      }
+      button.send:disabled { opacity: 0.55; cursor: default; }
+      .receipt { margin-top: 12px; color: #2e7d4f; font-weight: 600; }
+      .receipt.error { color: #b4462c; }
+      /* History: what was already sent in earlier rounds. Visible so you don't
+         ask for the same thing three times - and so you can look up why a
+         variant now looks the way it does. */
+      section.history {
+        margin-top: 22px; padding: 18px;
+        background: var(--page-surface);
+        border: 1px solid var(--page-line); border-radius: 10px;
+      }
+      section.history h2 { margin: 0 0 12px; font-size: 19px; }
+      .entry { padding: 10px 0; border-top: 1px solid var(--page-line); }
+      .entry:first-of-type { border-top: 0; padding-top: 0; }
+      .entryHead {
+        display: flex; gap: 10px; align-items: baseline;
+        font-size: 12px; color: var(--page-muted); margin-bottom: 3px;
+      }
+      .entryHead b { color: var(--page-accent); font-variant-numeric: tabular-nums; }
+      .entry p { margin: 0; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <h1>__TITLE__</h1>
+      <span class="context" title="__CONTEXT__">__CONTEXT__</span>
+      <nav class="jump">__JUMP_LINKS__</nav>
+    </header>
+    <main>
+      __SECTIONS__
+      <form class="choice" id="choiceForm">
+        <h2>Your reply</h2>
+        <p class="hint">
+          Pick a variant and write down what you want changed. Both land
+          directly in your coding agent's session - you don't have to copy
+          anything. You can also just reply in the chat if you prefer.
+        </p>
+        <div class="buttons">__CHOICE_BUTTONS__</div>
+        <textarea
+          id="note"
+          placeholder="e.g. &ldquo;Take 3, but with the icon from 1 and a bit less space above.&rdquo;"
+        ></textarea>
+        <br />
+        <button class="send" type="submit">Send reply</button>
+        <div class="receipt" id="receipt" hidden></div>
+      </form>
+      __HISTORY__
+    </main>
+    <script>
+      const form = document.getElementById('choiceForm');
+      const receipt = document.getElementById('receipt');
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const picked = form.querySelector('input[name="variant"]:checked');
+        const payload = {
+          variant: picked ? Number(picked.value) : null,
+          note: document.getElementById('note').value,
+        };
+        try {
+          const response = await fetch('/choice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) throw new Error(String(response.status));
+          receipt.hidden = false;
+          receipt.className = 'receipt';
+          receipt.textContent =
+            'Received. You can close this window and carry on in the session.';
+          form.querySelector('button.send').disabled = true;
+        } catch (error) {
+          receipt.hidden = false;
+          receipt.className = 'receipt error';
+          receipt.textContent =
+            'Could not be sent (' + error.message + '). Just say it in the chat.';
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,11 +1,20 @@
-# Arbeitsergebnisse eines Skill-Laufs, falls doch mal eines hier landet.
-# Sie gehören zur jeweiligen Fragestellung, nicht zur Skill.
+# Output of a skill run, in case one ever lands here. These belong to the
+# design question they came from, not to the skill.
 #
-# Bewusst KEIN Muster wie `*-varianten/` — das verschluckt `gui-varianten/`,
-# also die Skill selbst. Deshalb nur konkrete Dateinamen.
-auswahl.json
-verlauf.json
+# Deliberately NOT a pattern like `*-variants/` - that would swallow
+# `skills/ui-variants/`, the skill itself. So only concrete file names.
+choice.json
+history.json
+
+# Built by `show_variants.py --build-only`. The template it is built from
+# lives at skills/ui-variants/assets/page-template.html and is tracked.
+page.html
 
 # Python
 __pycache__/
 *.pyc
+
+# Local agent and tooling state. Not ignored globally on a fresh clone, so it
+# is named here rather than relying on anyone's personal excludes file.
+.claude/settings.local.json
+.impeccable/

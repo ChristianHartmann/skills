@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 is the floor the scripts actually need; the newest release
+        # catches deprecations early. There are no dependencies to install.
+        python-version: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run tests
+        run: python -W error::ResourceWarning -m unittest discover -s tests -t tests -v
+      - name: Build the example page
+        run: python skills/ui-variants/scripts/show_variants.py examples/sidebar-handle --build-only

@@ -1,0 +1,60 @@
+<!-- Variant 2: no handle at all - the collapsed rail is the control. -->
+
+<div class="shell" id="shell">
+  <button class="rail railButton" id="rail" hidden aria-expanded="false" aria-controls="panel">
+    <span class="railChevron">›</span>
+    <div class="railDot"></div>
+    <div class="railDot"></div>
+    <div class="railDot"></div>
+    <span class="sr-only">Expand panel</span>
+  </button>
+
+  <div class="panel" id="panel">
+    <div class="panelHeader">
+      Layers
+      <button class="iconButton" id="collapse" aria-controls="panel">
+        ‹<span class="sr-only">Collapse panel</span>
+      </button>
+    </div>
+    <div class="panelBody">
+      <div class="layerRow selected"><span class="swatch"></span>Background</div>
+      <div class="layerRow"><span class="swatch"></span>Sketch</div>
+      <div class="layerRow"><span class="swatch"></span>Annotations</div>
+    </div>
+  </div>
+
+  <div class="canvas">Canvas</div>
+</div>
+
+<style>
+  html, body { height: 100%; }
+  .shell { height: 100%; }
+
+  /* The rail is a button, so the whole strip is the target area. It has to
+     announce that, otherwise it reads as decoration: cursor, hover fill and a
+     chevron at the top. */
+  .railButton {
+    border: 0;
+    border-right: 1px solid var(--line);
+    cursor: pointer;
+    font: inherit;
+    color: var(--text-muted);
+    transition: background 120ms ease;
+  }
+  .railButton:hover { background: var(--surface-sunken); color: var(--text); }
+  .railButton:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .railChevron { font-size: 15px; line-height: 1; margin-bottom: var(--space-1); }
+</style>
+
+<script>
+  const panel = document.getElementById('panel');
+  const rail = document.getElementById('rail');
+
+  function setCollapsed(collapsed) {
+    panel.hidden = collapsed;
+    rail.hidden = !collapsed;
+  }
+
+  document.getElementById('collapse').addEventListener('click', () => setCollapsed(true));
+  rail.addEventListener('click', () => setCollapsed(false));
+</script>
