@@ -31,9 +31,33 @@ pick and anything that fits none of them - a variant nobody has drawn yet, for
 instance. The answer lands in the agent's session without you copying anything,
 and every round is kept in a history that is shown again next time.
 
-The agent triggers the skill on its own when you say you don't like something,
-ask for alternatives, or send a screenshot with a complaint - the word "variant"
-never has to come up.
+### How to ask for it
+
+Name the skill when you want it deliberately. In Claude Code that is a slash
+command; other agents take the same sentence as plain prose.
+
+```
+/ui-variants the sidebar needs a way to collapse and expand. What could that look like?
+```
+
+```
+/ui-variants I don't like the chevron for collapsing the sidebar, it is too easy to miss
+```
+
+You don't have to name it, though. The agent reaches for the skill on its own
+when you say something bothers you, ask for alternatives, or send a screenshot
+with a complaint - the word "variant" never has to come up:
+
+```
+The collapse button feels wrong to me. Can we do better?
+```
+
+The one thing worth being precise about is **how much of the screen you mean**.
+"The sidebar handle" gets you four sharp answers to one question; "the editor"
+gets you four whole screens that are expensive to build and hard to compare
+against each other. Saying whether it is the look or the behaviour that bothers
+you helps too - for behaviour the agent knows the variants have to be clickable
+rather than pretty pictures.
 
 ### Try it
 
