@@ -31,6 +31,11 @@
         }
       }
       * { box-sizing: border-box; }
+      /* Any `display` on a class beats the browser's built-in [hidden] rule, so
+         an element marked hidden stays on screen while the code reads as if it
+         were gone. This has cost debugging time twice; the same line is
+         injected into every variant iframe for the same reason. */
+      [hidden] { display: none !important; }
       body {
         margin: 0;
         font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -108,14 +113,19 @@
          view. The offset is measured from the real header, which wraps on
          narrow windows and is not a fixed height. */
       .notePanel {
+        display: none;
         flex: none; width: 340px;
         position: sticky; top: calc(var(--header-h, 64px) + 16px);
         margin: 24px 24px 24px 0;
         background: var(--page-surface);
         border: 1px solid var(--page-line);
         border-radius: 10px; padding: 14px;
-        display: flex; flex-direction: column; gap: 10px;
+        flex-direction: column; gap: 10px;
       }
+      /* One state class drives both halves. Toggling the panel separately from
+         the width is how they drift apart - the page grows wider while the
+         panel stays where it was. */
+      .shell.withPanel .notePanel { display: flex; }
       .panelHead { display: flex; align-items: baseline; gap: 8px; }
       .panelHead h2 {
         margin: 0; flex: 1;
@@ -255,7 +265,7 @@
         __HISTORY__
       </main>
 
-      <aside class="notePanel" id="notePanel" hidden aria-label="Note on a single variant">
+      <aside class="notePanel" id="notePanel" aria-label="Note on a single variant">
         <div class="panelHead">
           <h2>Note on <b id="panelFor">variant</b></h2>
           <button type="button" class="panelClose" id="panelClose" aria-label="Close">&times;</button>
@@ -268,7 +278,6 @@
       const form = document.getElementById('choiceForm');
       const receipt = document.getElementById('receipt');
       const shell = document.getElementById('shell');
-      const panel = document.getElementById('notePanel');
       const panelText = document.getElementById('panelText');
       const panelFor = document.getElementById('panelFor');
       const tally = document.getElementById('tally');
@@ -289,7 +298,6 @@
         openFor = number;
         panelFor.textContent = 'variant ' + number;
         panelText.value = notes[number] || '';
-        panel.hidden = false;
         shell.classList.add('withPanel');
         refresh();
         panelText.focus();
@@ -297,7 +305,6 @@
 
       function closePanel() {
         openFor = null;
-        panel.hidden = true;
         shell.classList.remove('withPanel');
         refresh();
       }
