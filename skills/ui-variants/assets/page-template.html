@@ -133,14 +133,19 @@
         color: var(--page-muted);
       }
       .panelHead b { color: var(--page-accent); }
-      .panelClose {
-        border: 0; background: transparent; color: var(--page-muted);
-        font: inherit; font-size: 18px; line-height: 1; cursor: pointer;
-        padding: 0 4px; border-radius: var(--radius-sm, 5px);
-      }
-      .panelClose:hover { color: var(--page-text); }
       .notePanel textarea { min-height: 180px; }
       .panelHint { margin: 0; font-size: 12px; color: var(--page-muted); }
+      /* Two named buttons rather than a cross: a cross reads as "throw this
+         away" to some people and "put it aside" to others, and here those are
+         two different outcomes. */
+      .panelButtons { display: flex; gap: 8px; justify-content: flex-end; }
+      .panelButtons .send { margin-top: 0; }
+      .ghost {
+        border: 1px solid var(--page-line); border-radius: 8px;
+        background: transparent; color: var(--page-text);
+        padding: 9px 16px; font: inherit; cursor: pointer;
+      }
+      .ghost:hover { border-color: var(--page-accent); color: var(--page-accent); }
       @media (max-width: 900px) {
         /* No room to sit beside the variants, so it becomes a sheet at the
            bottom edge instead of squeezing them to nothing. */
@@ -268,10 +273,16 @@
       <aside class="notePanel" id="notePanel" aria-label="Note on a single variant">
         <div class="panelHead">
           <h2>Note on <b id="panelFor">variant</b></h2>
-          <button type="button" class="panelClose" id="panelClose" aria-label="Close">&times;</button>
         </div>
         <textarea id="panelText" placeholder="What would you change about this one?"></textarea>
-        <p class="panelHint">Kept as you type. Close it when you are done - the space comes back.</p>
+        <p class="panelHint">
+          Kept until you send everything at the bottom. Cancel puts this note
+          back the way it was.
+        </p>
+        <div class="panelButtons">
+          <button type="button" class="ghost" id="panelCancel">Cancel</button>
+          <button type="button" class="send" id="panelOk">OK</button>
+        </div>
       </aside>
     </div>
     <script>
@@ -293,17 +304,35 @@
       measureHeader();
       addEventListener('resize', measureHeader);
 
+      // What the note said when the panel was opened, so Cancel has something
+      // to restore. Without it Cancel could only mean "delete", which is not
+      // what you want after correcting a typo in a note you already wrote.
+      let draftBefore = '';
+
       function openPanel(number) {
-        if (openFor === number) return closePanel();
+        if (openFor === number) return commit();
+        // Switching straight to another variant keeps what you typed. Losing a
+        // paragraph to a misplaced click is far worse than a slightly loose
+        // rule about when a note counts as written.
+        if (openFor !== null) notes[openFor] = panelText.value;
         openFor = number;
+        draftBefore = notes[number] || '';
         panelFor.textContent = 'variant ' + number;
-        panelText.value = notes[number] || '';
+        panelText.value = draftBefore;
         shell.classList.add('withPanel');
         refresh();
         panelText.focus();
       }
 
-      function closePanel() {
+      function commit() {
+        if (openFor !== null) notes[openFor] = panelText.value;
+        openFor = null;
+        shell.classList.remove('withPanel');
+        refresh();
+      }
+
+      function cancel() {
+        if (openFor !== null) notes[openFor] = draftBefore;
         openFor = null;
         shell.classList.remove('withPanel');
         refresh();
@@ -327,14 +356,12 @@
       document.querySelectorAll('.noteBtn').forEach((button) =>
         button.addEventListener('click', () => openPanel(button.dataset.variant))
       );
-      document.getElementById('panelClose').addEventListener('click', closePanel);
-      panelText.addEventListener('input', () => {
-        notes[openFor] = panelText.value;
-        refresh();
-      });
+      document.getElementById('panelOk').addEventListener('click', commit);
+      document.getElementById('panelCancel').addEventListener('click', cancel);
       document.getElementById('note').addEventListener('input', refresh);
       addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && openFor !== null) closePanel();
+        // Escape is Cancel everywhere else, so it is Cancel here too.
+        if (event.key === 'Escape' && openFor !== null) cancel();
       });
 
       form.addEventListener('submit', async (event) => {

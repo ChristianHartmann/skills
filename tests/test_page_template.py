@@ -87,6 +87,22 @@ class NotePanelTest(unittest.TestCase):
             "nor does a working [hidden] override exist",
         )
 
+    def test_panel_closes_through_two_named_buttons(self):
+        """A cross reads as "discard" to some and "put aside" to others, and
+        here those are different outcomes - so both are spelled out."""
+        _, body = split_template()
+        panel = body[body.index('class="notePanel"') : body.index("</aside>")]
+        self.assertIn('id="panelOk"', panel)
+        self.assertIn('id="panelCancel"', panel)
+        self.assertNotIn("&times;", panel, "the cross should be gone")
+
+    def test_cancel_restores_instead_of_deleting(self):
+        """Cancel after fixing a typo must not throw away the note underneath."""
+        _, body = split_template()
+        self.assertIn("draftBefore", body)
+        cancel = re.search(r"function cancel\(\)\s*\{([^}]*)\}", body).group(1)
+        self.assertIn("draftBefore", cancel)
+
     def test_panel_is_revealed_by_the_same_state_class_that_widens_the_page(self):
         """Two mechanisms for one state is how it drifts apart: the page grew
         wider while the panel stayed put."""
