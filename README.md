@@ -137,6 +137,40 @@ whether it holds changes this repo is missing:
 diff -r ~/.claude/skills/ui-variants skills/ui-variants
 ```
 
+### If you would rather call it explicitly
+
+The skill's description deliberately lists many ways of asking, so the agent
+reaches for it without you naming it. That costs context in every session -
+around 220 tokens for this one, because the description is what agents load at
+startup to know a skill exists.
+
+If you would rather pay nothing and invoke it yourself, Claude Code can
+override that from settings without touching the skill file - which is the only
+option for a plugin install, where the files live in a cache. Open `/skills`,
+highlight `ui-variants`, press Space until it reads `user-only`, then Enter.
+That writes:
+
+```json
+{ "skillOverrides": { "ui-variants": "user-invocable-only" } }
+```
+
+There are four states, and the middle one is often the best trade:
+
+| State | Claude sees | In your `/` menu |
+| --- | --- | --- |
+| `on` (default) | name and description | yes |
+| `name-only` | the name alone | yes |
+| `user-invocable-only` | nothing | yes |
+| `off` | nothing | no |
+
+`name-only` keeps the skill discoverable for a few tokens instead of a few
+hundred: the agent knows it exists and can offer it, but no longer recognises
+the phrasings the description spells out.
+
+To make the skill behave this way for everyone who installs it, rather than
+just for you, put `disable-model-invocation: true` in its frontmatter instead.
+That works in any agent, not only Claude Code.
+
 ## Bundled scripts
 
 `skills/ui-variants/scripts/` holds two tools that are useful outside the skill
