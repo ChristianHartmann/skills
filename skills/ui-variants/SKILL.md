@@ -220,12 +220,33 @@ pick and comment in the browser, or simply answer here, whichever they prefer.
 When they submit in the browser, the choice lands in `<dir>/choice.json`:
 
 ```json
-{ "variant": 3, "note": "but with the icon from 1 and less space above" }
+{
+  "variant": 3,
+  "note": "but with the icon from 1 and less space above",
+  "notes": {
+    "1": "the icon is right, the position is not",
+    "4": "too clever, forget this one"
+  }
+}
 ```
+
+`variant` is the favourite and may be `null` - none of them was it. `note` is
+the general reply. `notes` holds remarks written against a single variant
+through its Comment button, keyed by number; it is absent when there are none.
+Read all three: a `notes` entry is the most specific thing you get, because the
+human wrote it with that variant in front of them.
 
 Carry on with it directly, without the human having to say anything more here.
 If they answer in the chat instead, that is just as good; the numbers are the
 shared vocabulary.
+
+**Write the answer out before you act on it.** Quote the chosen number and the
+note verbatim in your reply, then say what you take it to mean. The reply came
+in through a channel the session log does not show: what stands there is that a
+background command finished, not what the human asked for. Without you repeating
+it, neither of you can reconstruct weeks later why the work went the way it did
+- and the human cannot catch it when you have understood the note differently
+than it was meant.
 
 **Every reply also lands in `history.json`** and appears below the variants as
 "Sent so far" the next time the page is built. You don't have to do anything for

@@ -67,6 +67,13 @@ class BuildPageTest(unittest.TestCase):
         self.assertIn('id="v0"', with_image)
         self.assertIn("Today.", with_image)
 
+    def test_every_variant_gets_a_comment_button(self):
+        """Without it there is no way to say anything about one variant."""
+        page = show_variants.build_page(EXAMPLE_DIR)
+        data = json.loads((EXAMPLE_DIR / "variants.json").read_text(encoding="utf-8"))
+        for variant in data["variants"]:
+            self.assertIn(f'class="noteBtn" data-variant="{variant["number"]}"', page)
+
     def test_variant_body_is_wrapped_but_not_altered(self):
         write_variant_folder(self.folder, MINIMAL_DATA, {1: "<p class='handle'>hi</p>"})
         page = show_variants.build_page(self.folder)
@@ -152,6 +159,44 @@ class HistoryTest(unittest.TestCase):
         self.assertIn("less space above", html)
         self.assertIn("no variant picked", html)
         self.assertIn("(nothing written)", html)
+
+    def test_per_variant_notes_keep_their_number(self):
+        """A note that lost its subject reads as a contradiction later."""
+        (self.folder / "history.json").write_text(
+            json.dumps(
+                [
+                    {
+                        "variant": 2,
+                        "note": "closer",
+                        "time": "2026-01-01 09:00",
+                        "notes": {"1": "too small", "3": "unreadable"},
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+        html = show_variants.build_history(self.folder)
+        self.assertIn("closer", html)
+        self.assertIn("<b>1</b> too small", html)
+        self.assertIn("<b>3</b> unreadable", html)
+
+    def test_entry_without_notes_still_renders(self):
+        """History written before per-variant notes existed must stay readable."""
+        (self.folder / "history.json").write_text(
+            json.dumps([{"variant": 1, "note": "an older entry", "time": "2026-01-01 09:00"}]),
+            encoding="utf-8",
+        )
+        html = show_variants.build_history(self.folder)
+        self.assertIn("an older entry", html)
+
+    def test_entry_with_only_per_variant_notes_says_so(self):
+        (self.folder / "history.json").write_text(
+            json.dumps([{"variant": None, "note": "", "notes": {"2": "make it wider"}}]),
+            encoding="utf-8",
+        )
+        html = show_variants.build_history(self.folder)
+        self.assertIn("make it wider", html)
+        self.assertNotIn("(nothing written)", html)
 
     def test_malformed_history_is_ignored_rather_than_fatal(self):
         """A broken history file must not cost the human the whole page."""

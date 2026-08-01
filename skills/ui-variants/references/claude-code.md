@@ -44,6 +44,11 @@ cat "<dir>/choice.json"
 Without the watcher the return channel only half works: the page tells the human
 "Received", so they think they are done, while nothing wakes the session.
 
+The watcher's output does not appear in the transcript - all that is recorded is
+that a background command finished. So quote the answer verbatim in your reply
+before acting on it, as step 6 of SKILL.md says. Otherwise the session keeps no
+trace of what was actually asked for.
+
 ## Working directory
 
 Use the session scratchpad directory named in your system prompt. Variants are

@@ -100,6 +100,18 @@ class ServerTest(unittest.TestCase):
         history = json.loads((self.folder / "history.json").read_text(encoding="utf-8"))
         self.assertEqual(history, [choice])
 
+    def test_per_variant_notes_survive_the_round_trip(self):
+        """They are the most specific thing the human sends; losing them is worse
+        than losing the pick."""
+        payload = {"variant": None, "note": "", "notes": {"1": "too small", "3": "unreadable"}}
+        status, _ = self._request("POST", "/choice", json.dumps(payload).encode())
+        self.assertEqual(status, 200)
+        self.thread.join(timeout=5)
+
+        choice = json.loads((self.folder / "choice.json").read_text(encoding="utf-8"))
+        self.assertEqual(choice["notes"], {"1": "too small", "3": "unreadable"})
+        self.assertIsNone(choice["variant"])
+
 
 class StaleChoiceTest(unittest.TestCase):
     def test_previous_choice_is_removed_on_start(self):

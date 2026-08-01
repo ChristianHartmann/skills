@@ -18,14 +18,18 @@ Design questions are hard to settle in chat. "A floating handle on the divider"
 produces two different pictures in the agent's head and in yours, and you only
 find out once it is built. This skill reverses the order: see first, then decide.
 
-![The comparison page: the current state as variant 0, then numbered variants, each with the reasoning behind it and its pros and cons](docs/images/example-page.png)
+![The comparison page: the current state as variant 0, then numbered variants, each with the reasoning behind it and its pros and cons, and a note panel open beside variant 1](docs/images/example-page.png)
 
 Each variant is a real, clickable rebuild inside its own iframe, using the
 project's own token file and component stylesheet - so what you judge is close
-to what you would get. Below the variants is a form: pick a number, write what
-you want changed, submit. The answer lands in the agent's session without you
-copying anything, and every round is kept in a history that is shown again next
-time.
+to what you would get.
+
+You reply in two ways, and both go in the same submission. Each variant has a
+Comment button that opens a note panel beside it, so you can write about a
+variant while it is still in front of you. The form at the bottom takes the
+pick and anything that fits none of them - a variant nobody has drawn yet, for
+instance. The answer lands in the agent's session without you copying anything,
+and every round is kept in a history that is shown again next time.
 
 The agent triggers the skill on its own when you say you don't like something,
 ask for alternatives, or send a screenshot with a complaint - the word "variant"

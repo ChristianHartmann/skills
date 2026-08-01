@@ -133,7 +133,9 @@ def build_page(folder: Path) -> str:
         sections.append(
             f'<section class="variant" id="v{number}">'
             f'<div class="head"><span class="number">{number}</span>'
-            f'<h2>{html_escape(variant["title"])}</h2></div>'
+            f'<h2>{html_escape(variant["title"])}</h2>'
+            f'<button type="button" class="noteBtn" data-variant="{number}">Comment</button>'
+            "</div>"
             f'<div class="stage"><iframe height="{height}" '
             f'srcdoc="{html_escape(document)}" title="Variant {number}"></iframe></div>'
             f'<div class="thinking"><h3>The thinking behind it</h3>'
@@ -175,11 +177,25 @@ def build_history(folder: Path) -> str:
         variant = entry.get("variant")
         chosen = f"Variant {variant}" if variant is not None else "no variant picked"
         time = entry.get("time", "")
-        note = (entry.get("note") or "").strip() or "(nothing written)"
+        general = (entry.get("note") or "").strip()
+
+        # Per-variant notes came later than the plain reply, so an older
+        # history file simply has none. Reading them with .get keeps those
+        # entries displayable instead of blanking the whole block.
+        per_variant = "".join(
+            f'<p class="perVariant"><b>{html_escape(number)}</b> {html_escape(text.strip())}</p>'
+            for number, text in sorted((entry.get("notes") or {}).items())
+            if text.strip()
+        )
+        if not general and not per_variant:
+            general = "(nothing written)"
+
         rows.append(
             f'<div class="entry"><div class="entryHead"><b>{index}.</b>'
             f"<span>{html_escape(chosen)}</span><span>{html_escape(time)}</span></div>"
-            f"<p>{html_escape(note)}</p></div>"
+            + (f"<p>{html_escape(general)}</p>" if general else "")
+            + per_variant
+            + "</div>"
         )
     return '<section class="history"><h2>Sent so far</h2>' + "".join(rows) + "</section>"
 
