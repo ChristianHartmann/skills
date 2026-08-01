@@ -83,6 +83,23 @@ an agent reads it back.
 
 ## Install
 
+### Claude Code, as a plugin
+
+```
+/plugin marketplace add ChristianHartmann/skills
+/plugin install ui-variants@hartmann-skills
+/reload-plugins
+```
+
+Updates arrive with `/plugin marketplace update` - there is no version to bump,
+so every commit here counts as a new one.
+
+Installed this way the skill is namespaced by its plugin, so the explicit
+invocation is `/ui-variants:ui-variants`. Nothing changes for the usual case
+where the agent reaches for it on its own.
+
+### Anywhere else, by symlink
+
 Symlink rather than copy, so this repo stays the single source of truth. After
 the first edit to a copied version, nobody knows which of the two is current.
 

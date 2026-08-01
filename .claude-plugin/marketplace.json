@@ -1,0 +1,19 @@
+{
+  "name": "hartmann-skills",
+  "owner": {
+    "name": "Christian Hartmann",
+    "url": "https://github.com/ChristianHartmann"
+  },
+  "plugins": [
+    {
+      "name": "ui-variants",
+      "source": "./",
+      "skills": ["./skills/ui-variants"],
+      "description": "Answers a user-interface question with 3-5 numbered, operable HTML variants built from the application's real tokens and CSS, opens them in the browser and takes your reply back into the session.",
+      "homepage": "https://github.com/ChristianHartmann/skills",
+      "repository": "https://github.com/ChristianHartmann/skills",
+      "license": "MIT",
+      "keywords": ["ui", "design", "frontend", "css", "review", "prototyping"]
+    }
+  ]
+}
