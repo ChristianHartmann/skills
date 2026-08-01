@@ -51,6 +51,12 @@ be started. Crop it to the same section your variants show, and at a comparable
 size - it stands next to them at original size, and two different scales side by
 side compare badly.
 
+**If the human sent a screenshot, use theirs.** Save it into the working
+directory as `current.png` rather than capturing your own. It shows the thing
+they were looking at when they complained, which is more to the point than a
+fresh capture, and it settles which element is meant without another question.
+Take your own only to fill in a state theirs doesn't show.
+
 The same question applies to the crop as to the variants: is the disputed thing
 in frame, and enough surroundings to place it? For a handle on a sidebar that
 means the header, a piece of content, the edge and a strip of the neighbouring

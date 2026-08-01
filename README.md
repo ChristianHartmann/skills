@@ -59,6 +59,15 @@ against each other. Saying whether it is the look or the behaviour that bothers
 you helps too - for behaviour the agent knows the variants have to be clickable
 rather than pretty pictures.
 
+**A screenshot alongside the text is worth a lot.** It settles which element you
+mean without a round of questions, and it becomes variant 0 on the comparison
+page - the anchor everything else is judged against. Without it the agent has
+to start your application to capture one itself, which it often cannot do
+behind a login or a build step, and then you end up comparing the designs
+against your memory of the current state. Memory is more generous than
+reality. Crop it to the part you are complaining about plus a little of its
+surroundings.
+
 ### Try it
 
 No installation needed, no dependencies - Python 3.9+ and a browser:
